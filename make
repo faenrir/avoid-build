@@ -47,69 +47,6 @@ grep -rl 'audio,video,wheel' . | xargs sed -i 's/audio,video,wheel/audio,video,w
 arch='x86_64'
 date="$(date +%Y%m%d)"
 img="${codename}-live-${arch}-${date}.iso"
-pkgs="
-base-system
-grub
-grub-i386-efi
-grub-x86_64-efi
-dbus
-dialog
-linux-firmware
-wireless_tools
-xorg-minimal
-xorg-input-drivers
-xorg-fonts
-ipafont-fonts-otf
-wmname
-xprop
-picom
-xsetroot
-kitty
-fish-shell
-vim-huge
-htop
-git
-wget
-curl
-dmenu
-rofi
-jq
-rofi-emoji
-noto-fonts-emoji
-xclip
-xsel
-imake
-libXt-devel
-ranger
-ueberzug
-ffmpeg
-ffmpegthumbnailer
-poppler
-unzip
-unrar
-p7zip
-unp
-mpv
-papirus-icon-theme
-papirus-folders
-xrdb
-arandr
-redshift
-alsa-utils
-alsa-plugins-pulseaudio
-pulsemixer
-cmus
-sxiv
-flameshot
-ImageMagick
-rtorrent
-fortune-mod
-gnuchess
-nudoku
-vitetris
-nSnake
-pong-command
-"
 
 enabled_services='acpid,agetty-tty1,dbus,udevd,dhcpcd,wpa_supplicant'
 
@@ -120,7 +57,7 @@ make
     -T "${codename}" \
     -a "${arch}" \
     -o "${img}" \
-    -p "$pkgs" \
+    -p "$(grep '^[^#].' ${codename}-x64.packages)" \
     -r "${repository}" \
     -r "${repository}/nonfree"
 
