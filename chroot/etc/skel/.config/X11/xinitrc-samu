@@ -1,0 +1,21 @@
+#!/bin/sh
+
+export WM_CHOICE="samu"
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+[[ -f ~/.Xresources ]] && xrdb -merge -I $HOME ~/.Xresources
+
+mons -s
+xsettingsd &
+echo '' > ~/.local/bin/wm/snap-safe
+echo '1' > /tmp/ws
+brillo -I
+wmname LG3D
+xset s off -dpms
+setbg
+udiskie &
+barSwitch.sh &
+picomSwitch &
+numlockx &
+start-pulseaudio-x11 &
+exec dbus-run-session -- samu

@@ -14,6 +14,7 @@ codename='avoid'
 username='user'
 password='avoid'
 repository='https://alpha.de.repo.voidlinux.org/current'
+pkgs=$(grep '^[^#].' ${codename}-x64.packages)
 
 original_dir="$(pwd)/"
 
@@ -46,18 +47,18 @@ grep -rl 'audio,video,wheel' . | xargs sed -i 's/audio,video,wheel/audio,video,w
 
 arch='x86_64'
 date="$(date +%Y%m%d)"
-img="${codename}-live-${arch}-${date}.iso"
+img="${codename}-${arch}-${date}.iso"
 
 enabled_services='acpid,agetty-tty1,dbus,udevd,dhcpcd,wpa_supplicant'
 
 make
 ./mklive.sh \
+    -T "${codename}" \
     -C "live.user=${username} live.shell=/usr/bin/bash net.ifnames=0 live.services=${enabled_services}" \
     -I "${original_dir}chroot" \
-    -T "${codename}" \
     -a "${arch}" \
     -o "${img}" \
-    -p "$(grep '^[^#].' ${codename}-x64.packages)" \
+    -p "${pkgs}" \
     -r "${repository}" \
     -r "${repository}/nonfree"
 
