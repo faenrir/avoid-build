@@ -1,146 +1,111 @@
 #
 # wm independent hotkeys
 #
+
 # make sxhkd reload its configuration files:
 super + Escape
-	pkill -USR1 -x sxhkd
+	pkill sxhkd && sxhkd
 
-# terminal emulator
+XF86MonBrightnessDown
+	brillo-down
+
+XF86MonBrightnessUp
+	brillo-up
+
+XF86AudioLowerVolume
+	pulse-decrease
+
+XF86AudioRaiseVolume
+	pulse-increase
+
+XF86AudioMute
+	pulse-mute
+
 super + Return
 	kitty
 
 super + shift + Return
-	urxvt -e fish
+	urxvtc
 
-# program launcher
+super + e
+	dmenufm
+        #-m rofi
+
 super + @space
 	rofi-launcher
+	#dmenu_run -i -l 6 -fn 'IBMPlexMono-15' 
+  #-nb '#1f1d29' -sf '#44475a' -sb '#9bced7' -nf '#dfddf4'
+	#rofi -show drun
 
-# launcher menu
 alt + @space
 	~/.config/rofi/rofiMenu.sh
 
+super + alt + @space
+	dmenu-ddg
+	#~/.config/rofi/RofiFtw/suggest ddg
 
-#super + g
-	#~/.config/scripts/picomSwitch.sh
+Print
+	rofiMenuPrint.sh
 
-## locate mouse cursor
-#shift + button1
-	#find-cursor -c orange -f --size 100 --distance 10 --wait 400 --line-width 5
+XF86Launch5
+	rofiMenuPrint.sh
 
-## livezoom
-#alt + Print
-	#xzoom
+super + b
+	barSwitch.sh
 
-## fullscreen zoom
-#super + Print
-        #~/.config/berry/zoom.sh
+super + g
+	picomSwitch
 
-## color picker
-#super + Insert
-        #echo -n $(xcolor) | xclip -sel clip
+super + d
+	picomTrans.sh
 
-## lockscreen
-#super + l
-	#betterlockscreen --lock
+super + shift + d
+	word-lookup
 
-#super + n
-	#~/.config/scripts/redshift.sh
+super + r
+	rs
 
-#super + r
-	#kitty -e ranger
+super + shift + r
+	rainbowSwitch
 
-#super + b
-	#~/.config/scripts/barSwitch.sh
+super + shift + l
+	i3lock -B none.jpg
 
-#super + t
-	#~/.config/berry/titleSwitch.sh
+super + shift + c
+	xclockcat -tiecolor mediumpurple
 
-#super + alt + t
-	#~/.config/berry/berryWindowTransparency.sh
+alt + shift + p
+	arandr
 
-#super + { a, s, z, x}
-	#~/.config/berry/berryWindowMover.sh {top_left, top_right, bottom_left, bottom_right}
+super + t
+	tile.sh
 
-#super + shift + { a, s, z, x}
-	#~/.config/berry/berryWindowMover.sh {snap_left, snap_right, snap_left, snap_right}
+super + shift + t
+	tileBig.sh
 
-##
-## berry hotkeys
-##
+super + equal
+	move -g
 
-#super + {h, j, k, l}
-    #berryc window_move {-50 0, 0 50, 0 -50, 50 0}
+super + minus
+	move -s
 
-#super + alt + {Left, Down, Up, Right}
-    #berryc window_move {-1 0, 0 1, 0 -1, 1 0}
+super + shift + m
+	move_windows.sh
 
-#super + {Left, Down, Up, Right}
-    #berryc window_move {-50 0, 0 50, 0 -50, 50 0}
+super + w
+	teleporter
 
-#super + shift +  {h, j, k, l}
-    #berryc window_resize {-50 0, 0 50, 0 -50, 50 0}
+#super + a
+	#snap.sh tl
 
-#super + shift +  {Left, Down, Up, Right}
-    #berryc window_resize {-50 0, 0 50, 0 -50, 50 0}
+#super + s
+	#snap.sh tr
 
-#super + alt + shift +  {Left, Down, Up, Right}
-    #berryc window_resize {-1 0, 0 1, 0 -1, 1 0}
+#super + z
+	#snap.sh bl
 
-#super + {1-9}
-    #berryc switch_workspace {0-8}
+#super + y
+	#snap.sh bl
 
-#super + shift + {1-9}
-    #berryc send_to_workspace {0-8}
-
-#super + m
-    #berryc window_monocle
-
-#super + f
-    #berryc fullscreen
-
-#super + shift + f
-    #berryc toggle_decorations | berryc window_monocle 
-
-#super +  p
-    #berryc snap_right
-
-#super + o 
-    #berryc snap_left
-
-#super + d
-    #berryc toggle_decorations
-
-#super + Tab
-    #berryc cycle_focus
-
-#super + q
-    #berryc window_close
-
-#super + c
-    #~/.config/berry/berryWindowMover.sh center
-
-#~button1
-    #berryc pointer_focus | berryc window_raise
-
-##super + button1
-##    ~/.config/berry/berryMove.sh
-
-##
-## Hotkeys
-##
-
-#XF86MonBrightnessDown
-    #~/.config/dunst/brightness down
-
-#XF86MonBrightnessUp
-    #~/.config/dunst/brightness up
-
-#XF86AudioLowerVolume
-	#amixer sset 'Master' 1%- && ~/.config/dunst/volume info
-
-#XF86AudioRaiseVolume
-	#amixer sset 'Master' 1%+ && ~/.config/dunst/volume info
-
-#XF86AudioMute
-#    ~/.config/dunst/volume mute
+#super + x
+	#snap.sh br

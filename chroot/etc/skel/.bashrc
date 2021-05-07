@@ -1,8 +1,8 @@
-# .bashrc
+#!/bin/bash
 
 . ~/.bash_profile
 
-export PATH="/home/fabian/.pyenv/bin:$PATH"
+export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
@@ -12,22 +12,6 @@ eval "$(pyenv virtualenv-init -)"
 alias ls='ls --color=auto'
 PS1='\W \$ '
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/fabian/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/fabian/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/fabian/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/fabian/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-#!/bin/sh
 if [ "$TERM" = "linux" ]; then
   /bin/echo -e "
   \e]P0403c58

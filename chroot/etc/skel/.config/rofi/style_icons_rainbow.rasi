@@ -10,7 +10,7 @@
 configuration {
     drun-display-format: "{icon} {name}";
     show-icons: true;
-    icon-theme: "Papirus-Dark";
+    icon-theme: "Adwaita";
     location: 0;
     yoffset: 0;
     xoffset: 0;	
@@ -24,14 +24,14 @@ configuration {
 
 // black
 * {
-bg: #1d1e26;
-bg-sel: #44475a;
+bg: #222222;
+bg-sel: #383838;
 fg: #f8f8f2;
 }
 
 * {
   background-color: #00000000;
-  font: "SFMonoPowerline-Regular 16";
+  font: "Inter 16";
 }
 
 window {
@@ -87,7 +87,7 @@ prompt {
 }
 
 entry {
-  font: "SFMonoPowerline-Regular 12";
+  font: "Inter 12";
   text-color: @background;
   padding: 8 12 8 12;
 }

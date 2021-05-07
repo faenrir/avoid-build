@@ -44,29 +44,6 @@ alias cava="cava | lolcat"
 PS1='[\u@\h \W]\$ '
 
 # Launch menu
-if [ -z "$DISPLAY" ] && [ -z "$SSH_CLIENT" ] && [ -z "$TMUX" ] && ! pgrep X > /dev/null; then
-	
+if [ -z "$DISPLAY" ] && [ -z "$SSH_CLIENT" ] && [ -z "$TMUX" ] && [[ "$(tty)" == "/dev/tty1" ]] && ! pgrep X > /dev/null; then
 	exec startx "$HOME/.config/X11/xinitrc-samu"
-	#startxfce4
-	#while true; do
-		#echo "Make a choice: (s) samu (x) xfce (g) gnome"
-
-		#read -rsn1 choice
-
-		#if [[ $choice == "s" ]]; then
-			#export WM_CHOICE="samu"
-			#exec startx "$HOME/.config/X11/xinitrc-samu"
-		##elif [[ $choice == "a" ]]; then
-			##export WM_CHOICE="awesome"
-			##exec startx "$HOME/.config/X11/xinitrc-awesome"
-		##elif [[ $choice == "o" ]]; then
-			##export WM_CHOICE="openbox"
-		       ## exec startx "$HOME/.config/X11/xinitrc-openbox"
-		#elif [[ $choice == "x" ]]; then
-			#xsettingsd -c ~/.config/xsettingsd/xsettingsd-gnome.conf &
-			#startxfce4
-		#elif [[ $choice == "g" ]]; then
-			#exec startx "$HOME/.config/X11/xinitrc-gnome"
-		#fi
-	#done
 fi

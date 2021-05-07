@@ -2,20 +2,30 @@
 
 export WM_CHOICE="samu"
 export _JAVA_AWT_WM_NONREPARENTING=1
+echo "LIGHT" > ~/.config/X11/theme
+monitor-hotplug.sh
 
+setbg ~/.local/share/backgrounds/light.jpg
+xsettingsd -c ~/.config/xsettingsd/xsettingsd-light.conf &
+cp ~/.config/kitty/themes/rose-pine-dawn.conf ~/.config/kitty/theme.conf
+
+# Load and merge the resources file
 [[ -f ~/.Xresources ]] && xrdb -merge -I $HOME ~/.Xresources
 
-mons -s
-xsettingsd &
-echo '' > ~/.local/bin/wm/snap-safe
+xcalib ~/.config/icc/xps9500fhd.icm
+echo "" > ~/.local/bin/wm/snap-safe
 echo '1' > /tmp/ws
+libinput-gestures-setup restart
 brillo -I
 wmname LG3D
 xset s off -dpms
-setbg
 udiskie &
-barSwitch.sh &
 picomSwitch &
 numlockx &
+eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+export SSH_AUTH_SOCK
 start-pulseaudio-x11 &
+urxvtd &
+sxhkd &
+barSwitch.sh &
 exec dbus-run-session -- samu

@@ -6,39 +6,31 @@
 # A simple block-style bar using lemonbar
 # and named pipes to reduce resource footprint
 #
+THEME_MODE=$(cat ~/.config/X11/theme)
+
+if [[ $THEME_MODE = "LIGHT" ]]; then
+    BBG=#f6f5f4
+    WHT=#222
+    BFG=#222
+elif [[ $THEME_MODE = "DRACULA" ]]; then
+    BBG=#191724
+    WHT=#dfddf4
+    BFG=#dfddf4
+else
+    BBG=#222222
+    WHT=#ebdbb2
+    BFG=#ebdbb2
+fi
 
 # colors
-#BBG=#080808
-BBG=#1f1d29 # bar background color c0 for transprency #1d1e26
-BBG2=#44475a
-BFG=#1d1e26
-WHT=#f8f8f2
-PNK=#ff79c6
-GLD=#f6c177
-REDD=#cc4444
-RED2="#ff9c9c"
-REDDRK=#662222
+BLU=#cd6d8c
+GLD=#c4a7e7
+RED=#ea6962
+HEART=#cd6d8c
+REDRK=#662222
 
-HIRED="%{F$REDDRK}%{B$REDD}"
-HIWHT="%{F$WHT}%{B$BBG2}"
-
-#prideDRK="#3a364d"
-#prideIn="#3a364d"
-#pride0="#3a364d"
-#pride1="#3a364d"
-#pride2="#3a364d"
-#pride3="#3a364d"
-#pride4="#3a364d"
-#pride5="#3a364d"
-
-prideDRK="#3a364d"
-prideIn="#a26f6c"
-pride0="#ff9c9c"
-pride1="#ffc986"
-pride2="#feff88"
-pride3="#aaff96"
-pride4="#a0acff"
-pride5="#ddb0f4"
+HIRED="%{F$RED}"
+HIWHT="%{F$WHT}"
 
 # Sleep constants
 BATTERY_SLEEP=10
@@ -51,24 +43,23 @@ MEMORY_SLEEP=10
 # QUOTE_SLEEP=600
 MAIL_SLEEP=120
 
-# Formatting Strings
-# I would reccomend not touching these :D
 SEP=" "
 SEP2="%{B$BBG} "
 CLR="${SEP}%{B-}${F-}"
 BATCMD="acpi"
 
 # buttons
-POWER="%{F$BFG}%{B$pride4} ${SEP}"
+POWER="%{A:rofiMenuPower.sh &:}%{F$BFG} ${SEP}%{A}"
+SWITCH="%{A:rofiMenuTheme.sh &:}%{F$BFG} ${SEP}%{A}"
 
 # bar config
-screenWidth="$(expr $(wattr w $(lsw -r)) - 24)x20+8+6"
-FONTS="-f "SFMonoPowerline:size=10" -f "SFMonoPowerline:size=10" -f "IosevkaNerdFontMono:size=10" -f "NotoSansMonoCJKJP:size=9" -f "NotoEmojiNerdFont:size=10""
+screenWidth="$(expr $(wattr w $(lsw -r)))x27+0+0"
+FONTS="-f "IBMPlexMono:size=11" -f "IosevkaNerdFontMono:size=13" -f "NotoSansMonoCJKJP:size=12" -f "NotoEmojiNerdFont:size=12""
 
 #MAIL_ADDRESS='https\://elearning.hochschule-rhein-waal.de/webmail/'
 
 PANEL_FIFO=/tmp/panel-fifo
-OPTIONS="-a 20 -d ${FONTS} -B ${BBG} -F ${BFG} -r 4 -R ${BBG} -g $screenWidth" 
+OPTIONS="-a 200 -d ${FONTS} -B ${BBG} -F ${BFG} -R ${BBG} -g $screenWidth" 
 
 [ -e "${PANEL_FIFO}" ] && rm "${PANEL_FIFO}"
 mkfifo "${PANEL_FIFO}"
@@ -77,18 +68,20 @@ workspace()
 {
    while true; do
        local cur=$(cat /tmp/ws)
+       #local cur=$(xprop -root _NET_CURRENT_DESKTOP | awk '{print $3}')
        local total=11
        local seq=""
 
        for ((i=1;i<cur;i++)); do
            seq+="%{A:xdotool key super+${i} &:}${i}%{A}${CLR}"
        done
-
-       seq+="%{A:xdotool key super+${i} &:}%{F$PNK}${i}%{A}%{F$WHT}${SEP}"
+       
+       [[ ${i} = 10 ]] && seq+="%{A:xdotool key super+0 &:}%{F$BLU}0%{F$WHT}%{A}${CLR}" || seq+="%{A:xdotool key super+${i} &:}%{F$BLU}${i}%{F$WHT}%{A}${CLR}"
 
        min=$cur+1
        for ((i=min;i<total;i++)); do
-	       [[ ${i} = 10 ]] && seq+="%{A:xdotool key super+0 &:}${i}%{A}${CLR}" || seq+="%{A:xdotool key super+${i} &:}${i}%{A}${CLR}"
+	       ws=$(($i + 1))
+	       [[ ${i} = 10 ]] && seq+="%{A:xdotool key super+0 &:}0%{A}${CLR}" || seq+="%{A:xdotool key super+${i} &:}${i}%{A}${CLR}"
        done
        local workspace="%{F$WHT} $seq"
        echo "WORKSPACE ${workspace}"
@@ -105,11 +98,12 @@ clock()
         local clock=$(printf '%(%a %d. %b %H:%M)T\n' "-1")
 	echo "CLOCK %{A:notify-send -t 4000 'launching ikhal...' && kitty -e ikhal &:}%{F$WHT}${clock}${CLR}%{A}"
 
-	[[ "$screenWidth" != "$(expr $(wattr w $(lsw -r)) - 24)x20+8+6" ]] && {
+	[[ "$screenWidth" != "$(expr $(wattr w $(lsw -r)))x27+0+0" ]] && {
 		move_windows.sh
-		if pgrep -x "picom" &>/dev/null; then
-			setbg
-		fi
+     #if pgrep -x "picom" &>/dev/null; then
+       #setbg
+     #fi
+	    setbg
 
 		(sleep 1; barSwitch.sh & (sleep 1; barSwitch.sh))
 	}
@@ -139,17 +133,17 @@ volume()
 	local mut=$(pamixer --get-mute)
 
         if [[ ${mut} = "true" ]]; then
-            label="${HIRED}${SEP}${SEP}"
+            label="${HIRED}${SEP}"
         elif [[ "$vol" -lt 60 ]]; then
-            label="%{B$pride3}%{F$BFG}${SEP}${SEP}"
+            label="%{F#449f77}${SEP}"
         else
-            label="%{B$pride3}%{F$BFG}${SEP}${SEP}"
+            label="%{F#449f77}${SEP}"
         fi
 
 	if [[ ${mut} = "false" ]]; then
-		echo "VOLUME ${HIWHT}%{A:notify-send -t 2000 'launching sound control...' && kitty -e pulsemixer &:}${label}$vol%{A}"
+		echo "VOLUME ${HIWHT}%{A:notify-send -t 2000 'launching sound control...' && kitty -e pulsemixer &:}${label}${SEP}%{F$BFG}${vol}%{A}"
 	else
-		echo "VOLUME ${HIWHT}%{A:notify-send -t 2000 'launching sound control...' && kitty -e pulsemixer &:}${label}$vol%{A}"
+		echo "VOLUME ${HIWHT}%{A:notify-send -t 2000 'launching sound control...' && kitty -e pulsemixer &:}${label}${SEP}%{F$RED}${vol}%{A}"
 	fi
 
         sleep ${VOLUME_SLEEP} 
@@ -165,34 +159,34 @@ battery()
 
 	if [ $cap -le "10" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥         "
+		echo "BATTERY %{F$HEART} ♥         "
 	elif [ $cap -le "20" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥        "
+		echo "BATTERY %{F$HEART} ♥ ♥        "
 	elif [ $cap -le "30" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥       "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥       "
 	elif [ $cap -le "40" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥      "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥      "
 	elif [ $cap -le "50" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥ ♥     "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥ ♥     "
 	elif [ $cap -le "60" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥ ♥ ♥    "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥ ♥ ♥    "
         elif [ $cap -le "70" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥ ♥ ♥ ♥   "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥ ♥ ♥ ♥   "
         elif [ $cap -le "80" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥  "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥  "
 	elif [ $cap -le "90" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ "
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ "
 	elif [ $cap -le "100" ]
 	then
-		echo "BATTERY %{B$pride5}%{F$BFG} ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥"
+		echo "BATTERY %{F$HEART} ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥"
 	fi
 
         sleep ${BATTERY_SLEEP}
@@ -207,10 +201,10 @@ wireless()
         local wifi=$(iwgetid -r)
 
         if [[ -z $wifi ]]; then
-            local wifi="%{B$pride2}%{F$BFG}${SEP}${SEP}DISCONNECTED"
+            local wifi="${HIRED}${SEP}${SEP}DISCONNECTED"
             echo "WIRELESS ${HIWHT}%{A:notify-send -t 2000 'launching network manager...' && kitty -e nmtui &:}${wifi}%{A}"
         else
-            echo "WIRELESS ${HIWHT}%{A:notify-send -t 2000 'launching network manager...' && kitty -e nmtui &:}%{B$pride2}%{F$BFG}${SEP}${SEP}${wifi}%{A}"
+            echo "WIRELESS ${HIWHT}%{A:notify-send -t 2000 'launching network manager...' && kitty -e nmtui &:}%{F#5188af}${SEP}${SEP}%{F$BFG}${wifi}%{A}"
         fi
 
         sleep ${WIRELESS_SLEEP}
@@ -229,7 +223,7 @@ memory() {
 				;;
 		esac
 	        done < /proc/meminfo
-		echo "MEMORY ${HIWHT}%{A:notify-send -t 2000 'launching htop...' && kitty -e sudo htop &:}%{B$pride1}%{F$BFG}${SEP}${SEP}${mem_avail} MiB%{A}"
+		echo "MEMORY ${HIWHT}%{A:notify-send -t 2000 'launching htop...' && kitty -e sudo htop &:}%{F#c4a7e7}${SEP}${SEP}%{F$BFG}${mem_avail} MiB%{A}"
 		sleep ${MEMORY_SLEEP}
 	done
 }
@@ -241,9 +235,9 @@ mail() {
 	    # mailcheck = small python script for imap
 		newMails=$(mailcheck)
 		if [[ $newMails -gt 0 ]]; then
-			echo "MAIL %{A:notify-send -t 2000 'loading mails...' && evolution &:}%{B$pride0}%{F$BFG}${SEP}${SEP}${newMails}%{A}"
+			echo "MAIL %{A:notify-send -t 2000 'loading mails...' && evolution &:}%{F#8888cc}${SEP}%{F$BFG}${SEP}0%{A}"
 		else
-			echo "MAIL %{A:notify-send -t 2000 'loading mails...' && evolution &:}%{B$pride0}%{F$BFG}${SEP}${SEP}0%{A}"
+			echo "MAIL %{A:notify-send -t 2000 'loading mails...' && evolution &:}%{F#8888cc}${SEP}%{F$BFG}${SEP}$newMails%{A}"
 		fi
 		sleep ${MAIL_SLEEP}
 	done
@@ -261,7 +255,7 @@ music() {
 		if [[ $title == '' ]]; then
 			echo "MUSIC "
 		else
-			echo "MUSIC %{F$GLD}%{F$WHT} $artist - $title"
+			echo "MUSIC %{F#c8a976}%{F$WHT} $artist - $title"
 		fi
 		sleep ${MPC_SLEEP}
 	done
@@ -277,27 +271,32 @@ while read -r line; do
         VOLUME*)
             fn_vol="${line#VOLUME }"
             ;;
-	BATTERY*)
+        BATTERY*)
             fn_bat="${line#BATTERY }"
             ;;
         WIRELESS*)
             fn_wire="${line#WIRELESS }"
             ;;
-	MEMORY*)
-	    fn_mem="${line#MEMORY }"
-	    ;;
-	MAIL*)
+        MEMORY*)
+            fn_mem="${line#MEMORY }"
+            ;;
+        MAIL*)
             fn_mail="${line#MAIL }"
-	    ;;
-	MUSIC*)
+            ;;
+        MUSIC*)
             fn_music="${line#MUSIC }"
-	    ;;
-	WORKSPACE*)
-	    fn_workspace="${line#WORKSPACE }"
-	    ;;
+            ;;
+        WORKSPACE*)
+            fn_workspace="${line#WORKSPACE }"
+            ;;
        #QUOTE*)
        #    fn_quote="${line#QUOTE }"
        #    ;;
     esac
-    printf "%s\n" "%{S0}${fn_workspace}${SEP}%{A:cmus-remote -u &:}${fn_music}%{A}%{l}%{c}${fn_time}%{r}%{A:notify-send -t 2000 'git gud!' && brave-browser-stable 'http\://gitlab.fritz.box\:3000/explore/repos' &:}%{B$prideDRK}%{F$WHT}${SEP}${SEP}%{A}${SEP2}%{A:notify-send -t 2000 'Loading kanban board...' && brave-browser-stable 'http\://gitlab.fritz.box\:3060/' &:}%{B$prideIn}%{F$BFG}${SEP}${SEP}${SEP2}%{A}${fn_mail}${SEP}${SEP2}${fn_mem}${SEP}${SEP2}${fn_wire}${SEP}${SEP2}${fn_vol}${SEP}${SEP2}%{A:rofiMenuPower.sh &:}${POWER}%{A}${SEP2}%{A:bat-notify &:}${fn_bat}%{A}${SEP}%{B$BBG}"
+
+    final_output="%{l}${fn_workspace}%{A:cmus-remote -u &:}${fn_music}%{A}%{c}${fn_time}%{r}${SWITCH}${fn_mail}${SEP2}${fn_mem}${SEP2}${fn_wire}${SEP2}${fn_vol}${SEP2}${POWER}%{A:bat-notify &:}${fn_bat}%{A}${SEP}%{B$BBG}"
+
+    echo "%{S0}$final_output%{S1}$final_output"
+    
+
 done < "${PANEL_FIFO}" | lemonbar ${OPTIONS} | sh > /dev/null

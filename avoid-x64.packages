@@ -20,7 +20,9 @@ dkms
 avahi
 avahi-glib-libs
 avahi-libs
+polkit
 acpid
+acpi
 
 #repo
 void-repo-multilib
@@ -61,8 +63,7 @@ mesa-vulkan-radeon
 mesa-vaapi
 mesa-vdpau
 xf86-video-amdgpu
-libGL
-libGLES
+libglvnd
 
 #WM
 wmutils-core
@@ -75,6 +76,9 @@ dmenu
 i3lock-color
 hsetroot
 dunst
+qt5ct
+pamixer
+brillo
 
 #USERLAND PKGS
 firefox
@@ -102,8 +106,12 @@ picom
 pavucontrol
 peek
 kitty
+rxvt-unicode
+tabbed
+urxvt-perls
 fish-shell
 vim-huge
+nodejs
 highlight
 hexd
 htop
@@ -112,6 +120,8 @@ curl
 dmenu
 jq
 mons
+adwaita-icon-theme
+gnome-themes-extra
 noto-fonts-cjk
 noto-fonts-ttf
 noto-fonts-ttf-extra
@@ -134,8 +144,6 @@ unrar
 p7zip
 unp
 mpv
-papirus-icon-theme
-papirus-folders
 xrdb
 arandr
 redshift

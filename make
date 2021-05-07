@@ -49,7 +49,7 @@ arch='x86_64'
 date="$(date +%Y%m%d)"
 img="${codename}-${arch}-${date}.iso"
 
-enabled_services='acpid,agetty-tty1,dbus,udevd,dhcpcd,wpa_supplicant'
+enabled_services='acpid,agetty-tty1,agetty-tty2,dbus,udevd,sshd,NetworkManager,iwd,bluetoothd,avahi-daemon,polkitd'
 
 make
 ./mklive.sh \
